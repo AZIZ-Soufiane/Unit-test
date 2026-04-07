@@ -109,3 +109,96 @@ Without isolation, tests can become unreliable.
 
 ```php
 use RefreshDatabase;
+
+class UserTest extends TestCase {
+    use RefreshDatabase;
+}
+```
+
+---
+
+## 🧪 Techniques for Isolation (Cont.)
+
+### 2. Mocking Dependencies
+
+Replace real services with fake ones.
+
+```php
+$mock = Mockery::mock(Service::class);
+$mock->shouldReceive('process')->andReturn(true);
+```
+
+---
+
+## 🔁 Techniques for Isolation (Cont.)
+
+### 3. Use Factories
+
+Generate fresh data for each test.
+
+- ✅ Avoid hardcoded data
+- ✅ Ensure uniqueness
+
+```php
+$user = User::factory()->create();
+```
+
+---
+
+## ⚙️ Environment Configuration
+
+Use a separate environment for testing:
+
+```
+APP_ENV=testing
+DB_DATABASE=test_db
+CACHE_DRIVER=array
+QUEUE_CONNECTION=sync
+```
+
+- No real API calls
+- No production database
+
+---
+
+## 🚀 Example: Laravel Test Setup
+
+```php
+public function test_user_creation()
+{
+    // Fresh environment
+    $this->refreshDatabase();
+
+    // Create user
+    $user = User::factory()->create();
+
+    // Assert
+    $this->assertDatabaseHas('users', [
+        'email' => $user->email
+    ]);
+}
+```
+
+---
+
+## ✅ Best Practices
+
+<div class="dt-card">
+  <ul>
+    <li>Run tests in a dedicated environment</li>
+    <li>Always isolate test data</li>
+    <li>Mock external services</li>
+    <li>Keep tests independent</li>
+    <li>Clean up after each test</li>
+  </ul>
+</div>
+
+---
+
+## 🎯 Conclusion
+
+- Environment ensures correct setup
+- Isolation ensures reliable tests
+- Together → Stable & maintainable testing
+
+**Clean tests = Confident deployments 🚀**
